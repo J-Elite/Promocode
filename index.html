@@ -206,14 +206,24 @@
     line-height: 1.25;
   }
 
-  #backBtn {
-    margin-top: 20px;
+  /* ปรับขนาดปุ่มกลับสู่หน้าหลัก */
+  #backBtn, #retryBtn {
     padding: 12px 40px;
+    border-radius: 8px;
     font-size: 1rem;
     background-color: #E30613;
-    border-radius: 8px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
     display: inline-block;
     width: auto;
+    margin-top: 20px;
+    white-space: nowrap;
+    transition: background-color 0.3s;
+  }
+  #backBtn:hover:enabled,
+  #retryBtn:hover:enabled {
+    background-color: #B3040F;
   }
 
   @media (max-width: 350px) {
