@@ -27,7 +27,7 @@
     background: #111;
     border: 3px solid #FFD700;
     border-radius: 16px;
-    padding: 28px 24px 32px 24px;
+    padding: 24px 20px 28px 20px;
     width: 90vw;
     max-width: 420px;
     box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
@@ -37,17 +37,18 @@
   }
 
   h1 {
-    font-size: 1.8rem;
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
     font-weight: 700;
     color: #FFD700;
-    margin-bottom: 28px;
-    line-height: 1.3;
+    margin-bottom: 24px;
+    line-height: 1.25;
     word-break: keep-all;
+    white-space: normal;
   }
 
   input[type="text"] {
     width: 100%;
-    padding: 14px 18px;
+    padding: 12px 16px;
     font-size: 1.2rem;
     border: 2.5px solid #FFD700;
     border-radius: 10px;
@@ -65,7 +66,7 @@
   }
 
   .button-group {
-    margin-top: 24px;
+    margin-top: 20px;
     display: flex;
     gap: 12px;
     justify-content: space-between;
@@ -74,9 +75,9 @@
 
   button {
     flex: 1;
-    min-width: 120px;
-    padding: 14px 0;
-    font-size: 1.15rem;
+    min-width: 100px;
+    padding: 12px 0;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #fff;
     background-color: #E30613;
@@ -96,8 +97,8 @@
   button.cancel:hover { background-color: #777; }
 
   .message {
-    margin-top: 18px;
-    font-size: 1.1rem;
+    margin-top: 16px;
+    font-size: 1rem;
     color: #FFD700;
     min-height: 1.4em;
     word-break: break-word;
@@ -105,20 +106,19 @@
   .hidden { display: none !important; }
 
   .summary {
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: #fff;
-    margin-top: 14px;
+    margin-top: 12px;
     line-height: 1.5;
     text-align: left;
     font-family: 'Kanit', Arial, sans-serif;
     word-break: break-word;
   }
 
-  /* Success icon */
   .success-icon {
-    margin: 18px 0 24px 0;
-    width: 96px;
-    height: 96px;
+    margin: 16px 0 20px 0;
+    width: 88px;
+    height: 88px;
     margin-left: auto;
     margin-right: auto;
     background: #FFD700;
@@ -128,16 +128,15 @@
     justify-content: center;
   }
   .success-icon svg {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     fill: #fff;
   }
 
-  /* Error icon in circle */
   .error-circle {
-    margin: 18px 0 24px 0;
-    width: 96px;
-    height: 96px;
+    margin: 16px 0 20px 0;
+    width: 88px;
+    height: 88px;
     margin-left: auto;
     margin-right: auto;
     background: #E30613;
@@ -145,43 +144,40 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 3rem;
+    font-size: 2.8rem;
     color: #fff;
     font-weight: bold;
   }
 
-  /* Spinner */
   .spinner {
     border: 4px solid rgba(255, 255, 255, 0.2);
     border-top: 4px solid #FFD700;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     animation: spin 1s linear infinite;
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 16px;
+    right: 16px;
     display: none;
     z-index: 100;
   }
   @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
 
-  /* Overlay box summary */
   #step-summary .overlay-box {
     border: 1.5px solid rgba(255,255,255,0.3);
     border-radius: 14px;
-    padding: 12px 16px;
+    padding: 10px 14px;
     margin-top: 12px;
     background-color: rgba(34,34,34,0.9);
   }
 
-  /* Info row */
   .info-row {
     display: flex;
     justify-content: space-between;
     margin: 4px 0;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     gap: 10px;
     flex-wrap: wrap;
   }
@@ -192,17 +188,17 @@
   #summary-datetime { color: #fff !important; font-weight: 500; }
 
   #step-summary > div:first-child {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #FFD700;
-    margin-bottom: 12px;
-    line-height: 1.3;
+    margin-bottom: 10px;
+    line-height: 1.25;
   }
 
   #backBtn {
-    margin-top: 24px;
+    margin-top: 20px;
     padding: 12px 28px;
-    font-size: 1.05rem;
+    font-size: 1rem;
     background-color: #E30613;
     border-radius: 8px;
     display: inline-block;
@@ -210,13 +206,13 @@
   }
 
   @media (max-width: 350px) {
-    h1 { font-size: 1.4rem; }
-    input[type="text"], button { font-size: 1rem; padding: 12px 10px; }
-    .success-icon { width: 72px; height: 72px; }
-    .success-icon svg { width: 36px; height: 36px; }
-    .error-circle { width: 72px; height: 72px; font-size: 2.5rem; }
+    h1 { font-size: 1.3rem; }
+    input[type="text"], button { font-size: 0.95rem; padding: 10px 8px; }
+    .success-icon { width: 68px; height: 68px; }
+    .success-icon svg { width: 32px; height: 32px; }
+    .error-circle { width: 68px; height: 68px; font-size: 2.2rem; }
     .button-group { gap: 8px; }
-    .info-row { font-size: 0.85rem; }
+    .info-row { font-size: 0.8rem; }
   }
 </style>
 </head>
@@ -272,7 +268,7 @@
 
     <!-- STEP 4 -->
     <div id="step-error" class="hidden" style="text-align:center;">
-      <div style="font-size:1.3rem; margin-bottom:10px;">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
+      <div style="font-size:1.2rem; margin-bottom:10px;">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
       <div class="error-circle">✖</div>
       <button id="retryBtn" type="button">กลับสู่หน้าหลัก</button>
     </div>
