@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เติมคะแนน J POINT</title>
+  <title>เติมคะแนน J POINT (TEST)</title>
   <style>
     body {
       margin: 0;
@@ -99,7 +99,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>เติมคะแนน J POINT</h1>
+    <h1>เติมคะแนน J POINT (TEST)</h1>
     <div id="step-form">
       <input type="text" id="codeInput" placeholder="กรอกโค้ดโปรโมชั่น" />
       <button id="submitBtn">ยืนยัน</button>
@@ -121,9 +121,14 @@
 
   <script>
     const AUTH_CONFIG = {
-      partnerCode: "J_ELITE",
-      clientId: "J_ELITE",
-      clientSecret: "ใส่รหัสตรงนี้" // ต้องเปลี่ยนเป็นค่าแท้จริง
+      partnerCode: "JP_DEV",
+      clientId: "JP_DEV",
+      clientSecret: "423e410c51e0a02c84d1c6046f97c9df1debde99a1aa1c216a39aa3e3756bd02a00401d99eaa264db266fad39f84680f1389af8f2803569ef788a031a2d82f05"
+    };
+
+    const ENDPOINTS = {
+      auth: "https://sit-api.jpointcrm.com/api/v1/partner/auth",
+      topup: "https://sit-api.jpointcrm.com/api/v1/partner/credit/topup"
     };
 
     let authToken = "";
@@ -136,19 +141,21 @@
 
     async function fetchAuthToken() {
       try {
-        const res = await fetch("https://api.jpointcrm.com/api/v1/partner/auth", {
+        const res = await fetch(ENDPOINTS.auth, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(AUTH_CONFIG)
         });
         const data = await res.json();
         authToken = data?.data?.authToken || "";
+        if (!authToken) throw new Error("No auth token");
       } catch (err) {
         showError("ไม่สามารถยืนยันตัวตนได้");
       }
     }
 
     function validateCode(code) {
+      // ตัวอย่างโค้ดทดสอบ
       const codeDB = {
         "001": { brandName: "J POINT", points: 200 },
         "ABC": { brandName: "J POINT", points: 500 }
@@ -174,7 +181,7 @@
         requestNumber: generateRequestNumber(),
         requestType: "Submit"
       };
-      const res = await fetch("https://api.jpointcrm.com/api/v1/partner/credit/topup", {
+      const res = await fetch(ENDPOINTS.topup, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
