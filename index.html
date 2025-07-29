@@ -5,8 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>เติมคะแนน J POINT (TEST)</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
+  /* จำลองฟอนต์ DB Ozone X (ต้องใช้ไฟล์จริงแทน) */
+  @font-face {
+    font-family: 'DB Ozone X';
+    src: local('Arial Black'), local('Arial Bold'), local('Arial');
+    font-weight: 700;
+    font-style: normal;
+  }
 
+  /* ใช้ DB Ozone X เป็นฟอนต์หลัก */
   * {
     box-sizing: border-box;
   }
@@ -14,7 +21,7 @@
   body, html {
     margin: 0; padding: 0;
     height: 100%;
-    font-family: 'Kanit', sans-serif;
+    font-family: 'DB Ozone X', Arial, sans-serif;
     background-color: #000;
     color: #fff;
     display: flex;
@@ -54,6 +61,7 @@
     color: #fff;
     text-align: center;
     transition: border-color 0.3s;
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
 
   input[type="text"]::placeholder {
@@ -85,6 +93,7 @@
     cursor: pointer;
     transition: background-color 0.3s;
     user-select: none;
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
 
   button:hover:enabled,
@@ -94,7 +103,7 @@
   }
 
   button:disabled {
-    background-color: #444;
+    background-color: #7a0000; /* สีแดงหม่น */
     cursor: not-allowed;
   }
 
@@ -125,6 +134,7 @@
     line-height: 1.6;
     user-select: none;
     text-align: left;
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
 
   .success-icon {
@@ -134,21 +144,17 @@
     height: 96px;
     margin-left: auto;
     margin-right: auto;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow:
-      0 0 8px #FFD700,
-      0 0 20px #FFD700,
-      0 0 30px #FFA500;
+    background-color: #FFD700;
+    box-shadow: none;
   }
   .success-icon svg {
     width: 48px;
     height: 48px;
-    fill: white;
-    filter: drop-shadow(0 0 2px #fff);
+    fill: #fff;
   }
 
   .error-icon {
@@ -182,7 +188,7 @@
   #step-summary .overlay-box {
     border: 2px solid #FFD700;
     border-radius: 14px;
-    padding: 16px 20px;
+    padding: 12px 16px;
     margin-top: 12px;
     background-color: #222;
     user-select: none;
@@ -192,9 +198,10 @@
   .info-row {
     display: flex;
     justify-content: space-between;
-    margin: 6px 0;
+    margin: 4px 0;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 0.9rem; /* เล็กลง */
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
   .info-label {
     color: #ccc;
@@ -210,6 +217,15 @@
   #summary-datetime {
     color: #fff !important;
     font-weight: 500;
+  }
+
+  /* ข้อความบนสุดใน summary ใหญ่ขึ้น */
+  #step-summary > div:first-child {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 12px;
+    user-select: none;
   }
 
   @media (max-width: 350px) {
@@ -232,7 +248,7 @@
       gap: 8px;
     }
     .info-row {
-      font-size: 1rem;
+      font-size: 0.8rem;
     }
   }
 </style>
@@ -369,7 +385,7 @@
   }
 
   function validateCode(code) {
-    return codeDB[code.toUpperCase()] || null;
+    return codeDB[code] || null;
   }
 
   function generateRequestNumber() {
@@ -417,42 +433,33 @@
     spinner.style.display = show ? "block" : "none";
   }
 
-  function showStep(step) {
-    const steps = ["step-form", "step-confirm", "step-summary", "step-error"];
-    steps.forEach((s) => {
-      document.getElementById(s).classList.add("hidden");
+  // ฟังก์ชันสลับแสดง step
+  function showStep(stepId) {
+    ["step-form", "step-confirm", "step-summary", "step-error"].forEach((id) => {
+      document.getElementById(id).classList.toggle("hidden", id !== stepId);
     });
-    document.getElementById(step).classList.remove("hidden");
   }
 
-  // เปิด/ปิดปุ่มยืนยันตามการกรอก input
+  // เช็ค input และเปิด/ปิดปุ่ม submit
   const codeInputEl = document.getElementById("codeInput");
   const submitBtn = document.getElementById("submitBtn");
   codeInputEl.addEventListener("input", () => {
     submitBtn.disabled = codeInputEl.value.trim() === "";
+    document.getElementById("message").textContent = "";
   });
 
-  // กดปุ่ม ยืนยัน (หน้า form) -> เช็ค valid แล้วแสดง preview สรุปคะแนน
+  // กดปุ่มยืนยันในหน้าแรก -> ตรวจโค้ดและขึ้นหน้าสรุป preview
   submitBtn.addEventListener("click", () => {
-    const codeInput = codeInputEl.value.trim();
-    const messageEl = document.getElementById("message");
-    messageEl.textContent = "";
-
-    if (!codeInput) {
-      messageEl.textContent = "กรุณากรอกโค้ด";
-      return;
-    }
-
-    const codeData = validateCode(codeInput);
+    const inputCode = codeInputEl.value.trim();
+    if (!inputCode) return;
+    const codeData = validateCode(inputCode);
     if (!codeData) {
       showError("โค้ดไม่ถูกต้อง หรือหมดอายุ");
       return;
     }
-
     currentCodeData = codeData;
-    currentUserCode = codeInput;
+    currentUserCode = inputCode;
 
-    // สร้าง HTML สองบรรทัดแบบสองคอลัมน์
     const confirmTextEl = document.getElementById("confirm-text");
     confirmTextEl.innerHTML = `
       <div class="info-row">
