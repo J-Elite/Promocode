@@ -6,15 +6,21 @@
 <title>เติมคะแนน J POINT (TEST)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
-
-  * {
-    box-sizing: border-box;
+  /* จำลองฟอนต์ DB Ozone X (ถ้ามีไฟล์จริงให้แทนที่) */
+  @font-face {
+    font-family: 'DB Ozone X';
+    src: local('Arial Black'), local('Arial Bold'), local('Arial');
+    font-weight: 700;
+    font-style: normal;
   }
 
+  * { box-sizing: border-box; }
+
   body, html {
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
     height: 100%;
-    font-family: 'Kanit', sans-serif;
+    font-family: 'DB Ozone X', 'Kanit', sans-serif;
     background-color: #000;
     color: #fff;
     display: flex;
@@ -41,7 +47,6 @@
     font-weight: 700;
     color: #FFD700;
     margin-bottom: 28px;
-    user-select: none;
   }
 
   input[type="text"] {
@@ -54,12 +59,9 @@
     color: #fff;
     text-align: center;
     transition: border-color 0.3s;
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
-
-  input[type="text"]::placeholder {
-    color: #aaa;
-  }
-
+  input[type="text"]::placeholder { color: #aaa; }
   input[type="text"]:focus {
     outline: none;
     border-color: #FFC700;
@@ -69,61 +71,30 @@
   .button-group {
     margin-top: 24px;
     display: flex;
-    gap: 8px; /* ช่องว่างปุ่มลดเหลือ 8px */
+    gap: 12px;
     justify-content: space-between;
   }
 
-  #step-form .button-group button {
-    flex: 1;
-  }
-
-  #step-confirm .button-group button {
-    flex: 1;
-  }
-
   button {
+    flex: 1;
     padding: 14px 0;
     font-size: 1.25rem;
     font-weight: 700;
     color: #fff;
+    background-color: #E30613;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s;
-    user-select: none;
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
-
+  button:hover:enabled { background-color: #B3040F; }
   button:disabled {
+    background-color: #7a0000; /* สีแดงหม่น */
     cursor: not-allowed;
   }
-
-  #submitBtn {
-    background-color: #E30613;
-  }
-
-  #submitBtn:disabled {
-    background-color: #8B0000; /* สีแดงหม่นสำหรับ disabled */
-  }
-
-  #cancelBtn {
-    background-color: #666;
-  }
-
-  #cancelBtn:hover,
-  #cancelBtn:focus {
-    background-color: #555;
-    outline: none;
-  }
-
-  #confirmBtn {
-    background-color: #E30613;
-  }
-
-  #confirmBtn:hover,
-  #confirmBtn:focus {
-    background-color: #B3040F;
-    outline: none;
-  }
+  button.cancel { background-color: #555; }
+  button.cancel:hover { background-color: #777; }
 
   .message {
     margin-top: 18px;
@@ -131,59 +102,40 @@
     color: #FFD700;
     min-height: 1.4em;
   }
-
-  .hidden {
-    display: none !important;
-  }
+  .hidden { display: none !important; }
 
   .summary {
     font-size: 1.1rem;
     color: #fff;
     margin-top: 14px;
     line-height: 1.6;
-    user-select: none;
-  }
-
-  .summary-box {
-    background-color: rgba(40, 40, 40, 0.9);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin: 18px 0 24px 0;
     text-align: left;
-    font-size: 0.9rem;
-    color: #FFD700;
+    font-family: 'DB Ozone X', Arial, sans-serif;
   }
 
-  .summary-box div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-
-  .summary-box div span.value {
-    color: #fff;
-  }
-
+  /* Success icon */
   .success-icon {
-    font-size: 6rem;
-    color: #FFD700;
-    margin-bottom: 18px;
-    user-select: none;
+    margin: 18px 0 24px 0;
     width: 96px;
     height: 96px;
-    line-height: 96px;
     margin-left: auto;
     margin-right: auto;
-    border: 3px solid #FFD700;
+    background: #FFD700;
     border-radius: 50%;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .success-icon svg {
+    width: 48px;
+    height: 48px;
+    fill: #fff;
   }
 
   .error-icon {
     font-size: 4rem;
     color: #E30613;
     margin-bottom: 18px;
-    user-select: none;
   }
 
   /* Spinner */
@@ -200,88 +152,111 @@
     display: none;
     z-index: 100;
   }
+  @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg);}
-    100% { transform: rotate(360deg);}
+  /* Overlay box summary */
+  #step-summary .overlay-box {
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    background-color: rgba(34,34,34,0.9);
   }
 
-  /* ปุ่มหน้าสรุป */
-  #step-summary #backBtn {
-    width: auto;
-    min-width: 160px;
-    max-width: 100%;
-    white-space: nowrap;
-    margin: 24px auto 0 auto;
-    display: block;
-    padding: 14px 20px;
+  /* Info row */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .info-label { color: #ccc; }
+  .info-value { color: #FFD700; }
+  .info-value.positive { color: #00ff6a; }
+
+  #summary-datetime { color: #fff !important; font-weight: 500; }
+
+  #step-summary > div:first-child {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 12px;
+  }
+
+  #backBtn {
+    margin-top: 24px;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    background-color: #E30613;
+    border-radius: 8px;
+    display: inline-block;
+    width: auto; /* ปรับความยาวพอดีกับข้อความ */
   }
 
   @media (max-width: 350px) {
-    h1 {
-      font-size: 1.5rem;
-    }
-    input[type="text"], button {
-      font-size: 1rem;
-      padding: 12px 14px;
-    }
-    .success-icon, .error-icon {
-      font-size: 4rem;
-      width: 64px;
-      height: 64px;
-      line-height: 64px;
-      margin-bottom: 14px;
-    }
+    h1 { font-size: 1.5rem; }
+    input[type="text"], button { font-size: 1rem; padding: 12px 14px; }
+    .success-icon { width: 72px; height: 72px; }
+    .success-icon svg { width: 36px; height: 36px; }
+    .button-group { gap: 8px; }
+    .info-row { font-size: 0.8rem; }
   }
 </style>
 </head>
 <body>
   <div class="container" role="main" aria-label="ฟอร์มเติมคะแนน J POINT">
-    <h1 id="form-title">กรอกรหัสรับคะแนน J POINT</h1>
 
-    <!-- หน้าแรก กรอกโค้ด -->
+    <!-- STEP 1 -->
     <div id="step-form">
-      <input type="text" id="codeInput" placeholder="กรอกรหัสรับคะแนน" aria-label="กรอกโค้ดโปรโมชั่น" autocomplete="off" />
+      <h1>กรอกรหัสรับคะแนน J POINT</h1>
+      <input type="text" id="codeInput" placeholder="กรอกรหัสรับคะแนน" autocomplete="off" />
       <div class="button-group">
-        <button id="cancelBtn" type="button">ยกเลิก</button>
-        <button id="submitBtn" type="button" aria-live="polite" disabled>ยืนยัน</button>
+        <button id="cancelBtn" type="button" class="cancel">ยกเลิก</button>
+        <button id="submitBtn" type="button" disabled>ยืนยัน</button>
       </div>
-      <div class="message" id="message" aria-live="polite"></div>
-      <div class="spinner" id="loadingSpinner" aria-hidden="true"></div>
+      <div class="message" id="message"></div>
+      <div class="spinner" id="loadingSpinner"></div>
     </div>
 
-    <!-- หน้ายืนยันก่อนเติมคะแนน -->
-    <div id="step-confirm" class="hidden" role="alert" aria-live="assertive">
-      <h1 id="confirm-title" style="color:#FFD700; text-align:left; font-weight:700; margin-bottom: 16px;">ยืนยันการรับคะแนน</h1>
-      <div class="summary-box" style="font-size: 1rem;">
-        <div><span>รหัสเติมคะแนน</span><span class="value" id="confirm-code">-</span></div>
-        <div><span>คะแนนที่จะได้รับ</span><span class="value" id="confirm-points">-</span></div>
-      </div>
+    <!-- STEP 2 -->
+    <div id="step-confirm" class="hidden">
+      <h1>ยืนยันการรับคะแนน</h1>
+      <div class="summary" id="confirm-text"></div>
       <div class="button-group">
-        <button id="confirmCancelBtn" type="button">ยกเลิก</button>
+        <button id="backToFormBtn" type="button" class="cancel">ยกเลิก</button>
         <button id="confirmBtn" type="button">ยืนยัน</button>
       </div>
-      <div class="message" id="confirm-message" style="color:#FFD700; margin-top:10px; min-height:1.4em;"></div>
-      <div class="spinner" id="confirmSpinner" aria-hidden="true" style="position:absolute; top:20px; right:20px; display:none;"></div>
     </div>
 
-    <!-- หน้าสรุปหลังเติมคะแนน -->
-    <div id="step-summary" class="hidden" role="alert" aria-live="assertive">
-      <div style="font-size:1.3rem; font-weight:700; color:#FFD700; margin-bottom: 16px; text-align:center;">
-        ระบบทำรายการเรียบร้อยแล้ว
+    <!-- STEP 3 -->
+    <div id="step-summary" class="hidden" style="text-align:center;">
+      <div>ระบบทำรายการเรียบร้อยแล้ว</div>
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 16.17l-3.88-3.88a1 1 0 0 0-1.42 1.42l4.59 4.59a1 1 0 0 0 1.42 0l10-10a1 1 0 0 0-1.42-1.42L9 16.17z"/>
+        </svg>
       </div>
-      <div class="success-icon" aria-hidden="true">✔</div>
-      <div class="summary-box" style="font-size: 0.9rem; color:#FFD700;">
-        <div><span>รหัสเติมคะแนน</span><span class="value" id="summary-code">-</span></div>
-        <div><span>คะแนนที่ได้รับ</span><span class="value" id="summary-points">-</span></div>
-        <div><span>วันที่ / เวลา</span><span class="value" id="summary-datetime" style="color:#fff;"></span></div>
+      <div class="overlay-box">
+        <div class="info-row">
+          <div class="info-label">รหัสเติมคะแนน</div>
+          <div class="info-value" id="summary-code"></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">คะแนนที่ได้รับ</div>
+          <div class="info-value positive" id="summary-points"></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">วันที่ / เวลา</div>
+          <div class="info-value" id="summary-datetime"></div>
+        </div>
       </div>
       <button id="backBtn" type="button">กลับสู่หน้าหลัก</button>
     </div>
 
-    <!-- หน้าข้อผิดพลาด -->
-    <div id="step-error" class="hidden" role="alert" aria-live="assertive">
-      <div class="error-icon" aria-hidden="true">✖</div>
+    <!-- STEP 4 -->
+    <div id="step-error" class="hidden">
+      <div class="error-icon">✖</div>
       <div class="summary" id="error-text"></div>
       <button id="retryBtn" type="button">ลองใหม่อีกครั้ง</button>
     </div>
@@ -291,55 +266,42 @@
   const AUTH_CONFIG = {
     partnerCode: "JP_DEV",
     clientId: "JP_DEV",
-    clientSecret: "423e410c51e0a02c84d1c6046f97c9df1debde99a1aa1c216a39aa3e3756bd02a00401d99eaa264db266fad39f84680f1389af8f2803569ef788a031a2d82f05"
+    clientSecret:
+      "423e410c51e0a02c84d1c6046f97c9df1debde99a1aa1c216a39aa3e3756bd02a00401d99eaa264db266fad39f84680f1389af8f2803569ef788a031a2d82f05",
   };
-
   const ENDPOINTS = {
     auth: "https://sit-api.jpointcrm.com/api/v1/partner/auth",
-    topup: "https://sit-api.jpointcrm.com/api/v1/partner/credit/topup"
+    topup: "https://sit-api.jpointcrm.com/api/v1/partner/credit/topup",
   };
-
   let authToken = "";
   let accountNumber = "";
   let currentCodeData = null;
   let currentUserCode = "";
 
-  // ตัวอย่างฐานข้อมูลโค้ดโปรโมชั่น
   const codeDB = {
     "001": { brandName: "J POINT", points: 200 },
-    "ABC": { brandName: "J POINT", points: 500 }
+    ABC: { brandName: "J POINT", points: 500 },
   };
 
-  // เก็บ auth token และ timestamp ใน sessionStorage
   function saveAuthToken(token) {
     sessionStorage.setItem("authToken", token);
     sessionStorage.setItem("authTokenTimestamp", Date.now());
   }
-
   function loadAuthToken() {
     const token = sessionStorage.getItem("authToken");
     const timestamp = sessionStorage.getItem("authTokenTimestamp");
     if (!token || !timestamp) return null;
-
-    // สมมติ token มีอายุ 1 ชั่วโมง (3600000 ms)
-    if (Date.now() - timestamp > 3600000) {
-      return null; // token หมดอายุ
-    }
+    if (Date.now() - timestamp > 3600000) return null;
     return token;
   }
-
   async function fetchAuthToken() {
     try {
       const existingToken = loadAuthToken();
-      if (existingToken) {
-        authToken = existingToken;
-        return;
-      }
-
+      if (existingToken) { authToken = existingToken; return; }
       const res = await fetch(ENDPOINTS.auth, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(AUTH_CONFIG)
+        body: JSON.stringify(AUTH_CONFIG),
       });
       const data = await res.json();
       authToken = data?.data?.authToken || "";
@@ -351,9 +313,7 @@
     }
   }
 
-  function validateCode(code) {
-    return codeDB[code] || null;
-  }
+  function validateCode(code) { return codeDB[code.toUpperCase()] || null; }
 
   function generateRequestNumber() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -366,104 +326,99 @@
 
   async function topupPoints(codeData, userCode) {
     const today = new Date();
-    const businessDate = today.toISOString().slice(0,10);
-    const branchName = "-";
-
+    const businessDate = today.toISOString().slice(0, 10);
     const payload = {
       businessDate: businessDate,
       brandName: codeData.brandName,
-      branchName: branchName,
+      branchName: "-",
       creditCode: "POINT",
       creditTopupAmount: codeData.points,
       memberCode: accountNumber,
       orderNumber: userCode,
       requestNumber: generateRequestNumber(),
-      requestType: "Submit"
+      requestType: "Submit",
     };
-
     const res = await fetch(ENDPOINTS.topup, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + authToken
+        Authorization: "Bearer " + authToken,
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
-    if (!res.ok) {
-      throw new Error("Topup failed");
-    }
+    if (!res.ok) throw new Error("Topup failed");
     return await res.json();
   }
 
-  function showLoading(show, forConfirm = false) {
-    const spinner = forConfirm ? document.getElementById("confirmSpinner") : document.getElementById("loadingSpinner");
-    spinner.style.display = show ? "block" : "none";
+  function showLoading(show) {
+    document.getElementById("loadingSpinner").style.display = show ? "block" : "none";
   }
 
   function showStep(stepId) {
-    ["step-form", "step-confirm", "step-summary", "step-error"].forEach(id => {
-      document.getElementById(id).classList.add("hidden");
+    ["step-form", "step-confirm", "step-summary", "step-error"].forEach((id) => {
+      document.getElementById(id).classList.toggle("hidden", id !== stepId);
     });
-    document.getElementById(stepId).classList.remove("hidden");
   }
 
-  document.getElementById("codeInput").addEventListener("input", () => {
-    const val = document.getElementById("codeInput").value.trim();
-    document.getElementById("submitBtn").disabled = val.length === 0;
+  const codeInputEl = document.getElementById("codeInput");
+  const submitBtn = document.getElementById("submitBtn");
+  codeInputEl.addEventListener("input", () => {
+    submitBtn.disabled = codeInputEl.value.trim() === "";
     document.getElementById("message").textContent = "";
   });
 
-  document.getElementById("cancelBtn").addEventListener("click", () => {
-    window.location.href = "about:blank"; // หรือจะเปลี่ยนเป็น URL หน้าอื่นตามต้องการ
-  });
-
-  document.getElementById("submitBtn").addEventListener("click", () => {
-    const codeInput = document.getElementById("codeInput").value.trim();
+  submitBtn.addEventListener("click", () => {
+    const codeInput = codeInputEl.value.trim();
+    if (!codeInput) return;
     const codeData = validateCode(codeInput);
-    if (!codeData) {
-      showError("โค้ดไม่ถูกต้อง หรือหมดอายุ");
-      return;
-    }
+    if (!codeData) { showError("โค้ดไม่ถูกต้อง หรือหมดอายุ"); return; }
     currentCodeData = codeData;
     currentUserCode = codeInput;
-
-    // แสดงหน้าสรุปก่อนยืนยัน
-    document.getElementById("confirm-code").textContent = currentUserCode;
-    document.getElementById("confirm-points").textContent = "+" + currentCodeData.points + " คะแนน";
-    document.getElementById("confirm-message").textContent = "";
+    document.getElementById("confirm-text").innerHTML = `
+      <div class="info-row">
+        <div class="info-label">รหัสเติมคะแนน</div>
+        <div class="info-value">${currentUserCode}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">คะแนนที่จะได้รับ</div>
+        <div class="info-value positive">+${codeData.points} คะแนน</div>
+      </div>
+    `;
     showStep("step-confirm");
   });
 
-  document.getElementById("confirmCancelBtn").addEventListener("click", () => {
+  document.getElementById("cancelBtn").addEventListener("click", () => {
+    codeInputEl.value = "";
+    submitBtn.disabled = true;
+    document.getElementById("message").textContent = "";
+  });
+  document.getElementById("backToFormBtn").addEventListener("click", () => {
     showStep("step-form");
+    document.getElementById("message").textContent = "";
   });
 
   document.getElementById("confirmBtn").addEventListener("click", async () => {
-    showLoading(true, true);
-    document.getElementById("confirm-message").textContent = "กำลังเติมคะแนน...";
+    showLoading(true);
     try {
       await fetchAuthToken();
       await topupPoints(currentCodeData, currentUserCode);
-      showLoading(false, true);
-      showSummary(currentCodeData.points, currentUserCode);
+      showLoading(false);
+      showSummary(currentCodeData.points);
     } catch (err) {
-      showLoading(false, true);
-      if (!authToken) {
-        showError("ไม่สามารถยืนยันตัวตนได้");
-      } else {
-        showError("ไม่สามารถเติมคะแนนได้");
-      }
+      showLoading(false);
+      if (!authToken) showError("ไม่สามารถยืนยันตัวตนได้");
+      else showError("ไม่สามารถเติมคะแนนได้");
     }
   });
 
-  function showSummary(points, code) {
+  function showSummary(points) {
     showStep("step-summary");
-    const now = new Date();
-    document.getElementById("summary-code").textContent = code;
+    document.getElementById("summary-code").textContent = currentUserCode;
     document.getElementById("summary-points").textContent = "+" + points + " คะแนน";
-    document.getElementById("summary-datetime").textContent =
-      now.toLocaleDateString("th-TH",{day:'numeric',month:'long',year:'numeric'}) + " " +
-      now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'});
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric" });
+    const timeStr = now.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+    document.getElementById("summary-datetime").textContent = `${dateStr} ${timeStr}`;
   }
 
   function showError(msg) {
@@ -471,13 +426,8 @@
     document.getElementById("error-text").innerHTML = msg;
   }
 
-  document.getElementById("backBtn").addEventListener("click", () => {
-    window.location.reload();
-  });
-
-  document.getElementById("retryBtn").addEventListener("click", () => {
-    window.location.reload();
-  });
+  document.getElementById("backBtn").addEventListener("click", () => { window.location.reload(); });
+  document.getElementById("retryBtn").addEventListener("click", () => { window.location.reload(); });
 
   function getUserID() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -486,15 +436,8 @@
 
   window.addEventListener("DOMContentLoaded", async () => {
     accountNumber = getUserID();
-    if (!accountNumber) {
-      showError("ไม่พบ userID ใน URL");
-      return;
-    }
-    try {
-      await fetchAuthToken();
-    } catch {
-      // Error แสดงไปแล้วใน fetchAuthToken()
-    }
+    if (!accountNumber) { showError("ไม่พบ userID ใน URL"); return; }
+    try { await fetchAuthToken(); } catch {}
   });
 </script>
 </body>
