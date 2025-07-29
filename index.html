@@ -70,7 +70,7 @@
     margin-top: 24px;
     display: flex;
     gap: 12px;
-    justify-content: space-between; /* ปรับให้ปุ่มอยู่ซ้ายขวา */
+    justify-content: space-between;
   }
 
   button {
@@ -87,10 +87,15 @@
     user-select: none;
   }
 
-  button:hover,
-  button:focus {
+  button:hover:enabled,
+  button:focus:enabled {
     background-color: #B3040F;
     outline: none;
+  }
+
+  button:disabled {
+    background-color: #444;
+    cursor: not-allowed;
   }
 
   button.cancel {
@@ -123,10 +128,27 @@
   }
 
   .success-icon {
-    font-size: 5rem;
-    color: #00ff6a;
     margin: 18px 0 24px 0;
     user-select: none;
+    width: 96px;
+    height: 96px;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 0 8px #FFD700,
+      0 0 20px #FFD700,
+      0 0 30px #FFA500;
+  }
+  .success-icon svg {
+    width: 48px;
+    height: 48px;
+    fill: white;
+    filter: drop-shadow(0 0 2px #fff);
   }
 
   .error-icon {
@@ -184,6 +206,12 @@
     color: #00ff6a;
   }
 
+  /* วันที่เวลาหน้าสรุป ใช้สีขาวปกติ */
+  #summary-datetime {
+    color: #fff !important;
+    font-weight: 500;
+  }
+
   @media (max-width: 350px) {
     h1 {
       font-size: 1.5rem;
@@ -192,9 +220,13 @@
       font-size: 1rem;
       padding: 12px 14px;
     }
-    .success-icon, .error-icon {
-      font-size: 3rem;
-      margin-bottom: 14px;
+    .success-icon {
+      width: 72px;
+      height: 72px;
+    }
+    .success-icon svg {
+      width: 36px;
+      height: 36px;
     }
     .button-group {
       gap: 8px;
@@ -220,7 +252,7 @@
       />
       <div class="button-group">
         <button id="cancelBtn" type="button" class="cancel">ยกเลิก</button>
-        <button id="submitBtn" type="button" aria-live="polite">ยืนยัน</button>
+        <button id="submitBtn" type="button" aria-live="polite" disabled>ยืนยัน</button>
       </div>
       <div class="message" id="message" aria-live="polite"></div>
       <div class="spinner" id="loadingSpinner" aria-hidden="true"></div>
@@ -228,20 +260,24 @@
 
     <!-- STEP 2: Confirm preview -->
     <div id="step-confirm" class="hidden" role="alert" aria-live="assertive">
-      <h1>ยืนยันคะแนนที่จะได้รับ</h1>
+      <h1>ยืนยันการรับคะแนน</h1>
       <div class="summary" id="confirm-text" style="text-align: left;">
         <!-- จะเติมเป็น info-row -->
       </div>
       <div class="button-group">
-        <button id="confirmBtn" type="button">ยืนยัน</button>
         <button id="backToFormBtn" type="button" class="cancel">ยกเลิก</button>
+        <button id="confirmBtn" type="button">ยืนยัน</button>
       </div>
     </div>
 
     <!-- STEP 3: Success -->
     <div id="step-summary" class="hidden" role="alert" aria-live="assertive" style="text-align:center;">
       <div>ระบบทำรายการเรียบร้อยแล้ว</div>
-      <div class="success-icon" aria-hidden="true">✔</div>
+      <div class="success-icon" aria-hidden="true" aria-label="สำเร็จ">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" >
+          <path d="M9 16.17l-3.88-3.88a1 1 0 0 0-1.42 1.42l4.59 4.59a1 1 0 0 0 1.42 0l10-10a1 1 0 0 0-1.42-1.42L9 16.17z"/>
+        </svg>
+      </div>
       <div class="overlay-box">
         <div class="info-row">
           <div class="info-label">รหัสเติมคะแนน</div>
@@ -256,7 +292,7 @@
           <div class="info-value" id="summary-datetime"></div>
         </div>
       </div>
-      <button id="backBtn" type="button" style="margin-top:24px;">ทำรายการต่อ</button>
+      <button id="backBtn" type="button" style="margin-top:24px;">กลับสู่หน้าหลัก</button>
     </div>
 
     <!-- STEP 4: Error -->
@@ -389,9 +425,16 @@
     document.getElementById(step).classList.remove("hidden");
   }
 
+  // เปิด/ปิดปุ่มยืนยันตามการกรอก input
+  const codeInputEl = document.getElementById("codeInput");
+  const submitBtn = document.getElementById("submitBtn");
+  codeInputEl.addEventListener("input", () => {
+    submitBtn.disabled = codeInputEl.value.trim() === "";
+  });
+
   // กดปุ่ม ยืนยัน (หน้า form) -> เช็ค valid แล้วแสดง preview สรุปคะแนน
-  document.getElementById("submitBtn").addEventListener("click", () => {
-    const codeInput = document.getElementById("codeInput").value.trim();
+  submitBtn.addEventListener("click", () => {
+    const codeInput = codeInputEl.value.trim();
     const messageEl = document.getElementById("message");
     messageEl.textContent = "";
 
@@ -426,7 +469,8 @@
 
   // ปุ่ม ยกเลิก (ในหน้ากรอกโค้ด) -> ล้างค่าและข้อความ
   document.getElementById("cancelBtn").addEventListener("click", () => {
-    document.getElementById("codeInput").value = "";
+    codeInputEl.value = "";
+    submitBtn.disabled = true;
     document.getElementById("message").textContent = "";
   });
 
@@ -481,7 +525,7 @@
     document.getElementById("error-text").innerHTML = msg;
   }
 
-  // ปุ่ม ทำรายการต่อ (หน้า success) รีโหลดเพจ
+  // ปุ่ม กลับสู่หน้าหลัก (หน้า success) รีโหลดเพจ
   document.getElementById("backBtn").addEventListener("click", () => {
     window.location.reload();
   });
