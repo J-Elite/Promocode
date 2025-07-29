@@ -133,12 +133,6 @@
     fill: #fff;
   }
 
-  .error-icon {
-    font-size: 4rem;
-    color: #E30613;
-    margin-bottom: 18px;
-  }
-
   /* Spinner */
   .spinner {
     border: 4px solid rgba(255, 255, 255, 0.2);
@@ -196,7 +190,40 @@
     border-radius: 8px;
     display: inline-block;
     width: auto;
-    font-family: 'Kanit', sans-serif;
+  }
+
+  /* Error Page New Design */
+  #step-error .error-icon-wrapper {
+    margin: 18px auto 20px;
+    width: 96px;
+    height: 96px;
+    background: #E30613;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #step-error .error-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+    fill: #fff;
+  }
+
+  #step-error .error-message {
+    font-size: 1.2rem;
+    color: #FFD700;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  #retryBtn {
+    background-color: #E30613;
+    border-radius: 10px;
+    padding: 12px 0;
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto;
+    display: block;
   }
 
   @media (max-width: 350px) {
@@ -261,9 +288,13 @@
 
     <!-- STEP 4 -->
     <div id="step-error" class="hidden">
-      <div class="error-icon">✖</div>
-      <div class="summary" id="error-text"></div>
-      <button id="retryBtn" type="button">ลองใหม่อีกครั้ง</button>
+      <div class="error-message">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
+      <div class="error-icon-wrapper">
+        <svg viewBox="0 0 24 24">
+          <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 1 0-1.41 1.42L10.59 12l-4.9 4.89a1 1 0 1 0 1.41 1.42L12 13.41l4.89 4.9a1 1 0 0 0 1.42-1.41L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4z"/>
+        </svg>
+      </div>
+      <button id="retryBtn" type="button">กลับสู่หน้าหลัก</button>
     </div>
   </div>
 
@@ -412,7 +443,7 @@
     } catch (err) {
       showLoading(false);
       if (!authToken) showError("ไม่สามารถยืนยันตัวตนได้");
-      else showError("ไม่สามารถเติมคะแนนได้");
+      else showError("ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง");
     }
   });
 
@@ -427,23 +458,25 @@
   }
 
   function showError(msg) {
+    document.querySelector("#step-error .error-message").textContent = msg;
     showStep("step-error");
-    document.getElementById("error-text").innerHTML = msg;
   }
 
-  document.getElementById("backBtn").addEventListener("click", () => { window.location.reload(); });
-  document.getElementById("retryBtn").addEventListener("click", () => { window.location.reload(); });
-
-  function getUserID() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get("userID");
-  }
-
-  window.addEventListener("DOMContentLoaded", async () => {
-    accountNumber = getUserID();
-    if (!accountNumber) { showError("ไม่พบ userID ใน URL"); return; }
-    try { await fetchAuthToken(); } catch {}
+  document.getElementById("backBtn").addEventListener("click", () => {
+    location.reload();
   });
+  document.getElementById("retryBtn").addEventListener("click", () => {
+    location.reload();
+  });
+
+  (async () => {
+    try {
+      await fetchAuthToken();
+      accountNumber = "MEMBER001";
+    } catch (e) {
+      showError("ไม่สามารถยืนยันตัวตนได้");
+    }
+  })();
 </script>
 </body>
 </html>
