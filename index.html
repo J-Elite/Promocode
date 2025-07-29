@@ -134,15 +134,15 @@
     height: 88px;
     margin-left: auto;
     margin-right: auto;
-    background: none;
+    border: 4px solid #00ff6a;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .success-icon svg {
-    width: 72px;
-    height: 72px;
+    width: 60px;
+    height: 60px;
     stroke: #00ff6a;
     stroke-width: 4;
     fill: none;
@@ -228,7 +228,7 @@
     h1 { font-size: 1.3rem; }
     input[type="text"], button { font-size: 0.95rem; padding: 10px 8px; }
     .success-icon { width: 68px; height: 68px; }
-    .success-icon svg { width: 56px; height: 56px; }
+    .success-icon svg { width: 48px; height: 48px; }
     .error-circle { width: 68px; height: 68px; }
     .error-circle svg { width: 36px; height: 36px; }
     .button-group { gap: 8px; }
@@ -294,7 +294,7 @@
         <div style="font-size:1.2rem; margin-bottom:10px;">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
         <div class="error-circle">
           <svg viewBox="0 0 24 24">
-            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="6" y1="6" x2="18" x2="18" y2="18" />
             <line x1="6" y1="18" x2="18" y2="6" />
           </svg>
         </div>
@@ -483,7 +483,7 @@
   window.addEventListener("DOMContentLoaded", async () => {
     accountNumber = getUserID();
     if (!accountNumber) { showError("ไม่พบ userID ใน URL"); return; }
-    try { await fetchAuthToken(); } catch {}
+    try { await fetchAuthToken(); } catch (err) { console.error(err); }
   });
 </script>
 </body>
