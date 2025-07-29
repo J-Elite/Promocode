@@ -70,7 +70,7 @@
     margin-top: 24px;
     display: flex;
     gap: 12px;
-    justify-content: center;
+    justify-content: space-between; /* ปรับให้ปุ่มอยู่ซ้ายขวา */
   }
 
   button {
@@ -119,12 +119,13 @@
     margin-top: 14px;
     line-height: 1.6;
     user-select: none;
+    text-align: left;
   }
 
   .success-icon {
-    font-size: 4rem;
+    font-size: 5rem;
     color: #00ff6a;
-    margin-bottom: 18px;
+    margin: 18px 0 24px 0;
     user-select: none;
   }
 
@@ -155,6 +156,34 @@
     100% { transform: rotate(360deg);}
   }
 
+  /* กรอบ Overlay ในหน้าสรุป */
+  #step-summary .overlay-box {
+    border: 2px solid #FFD700;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-top: 12px;
+    background-color: #222;
+    user-select: none;
+  }
+
+  /* ตารางข้อมูลในหน้าสรุป และ ยืนยัน */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .info-label {
+    color: #ccc;
+  }
+  .info-value {
+    color: #FFD700;
+  }
+  .info-value.positive {
+    color: #00ff6a;
+  }
+
   @media (max-width: 350px) {
     h1 {
       font-size: 1.5rem;
@@ -169,6 +198,9 @@
     }
     .button-group {
       gap: 8px;
+    }
+    .info-row {
+      font-size: 1rem;
     }
   }
 </style>
@@ -187,8 +219,8 @@
         autocomplete="off"
       />
       <div class="button-group">
-        <button id="submitBtn" type="button" aria-live="polite">ยืนยัน</button>
         <button id="cancelBtn" type="button" class="cancel">ยกเลิก</button>
+        <button id="submitBtn" type="button" aria-live="polite">ยืนยัน</button>
       </div>
       <div class="message" id="message" aria-live="polite"></div>
       <div class="spinner" id="loadingSpinner" aria-hidden="true"></div>
@@ -197,18 +229,34 @@
     <!-- STEP 2: Confirm preview -->
     <div id="step-confirm" class="hidden" role="alert" aria-live="assertive">
       <h1>ยืนยันคะแนนที่จะได้รับ</h1>
-      <div class="summary" id="confirm-text"></div>
+      <div class="summary" id="confirm-text" style="text-align: left;">
+        <!-- จะเติมเป็น info-row -->
+      </div>
       <div class="button-group">
-        <button id="confirmBtn" type="button">ยืนยันเติมคะแนน</button>
-        <button id="backToFormBtn" type="button" class="cancel">ย้อนกลับ</button>
+        <button id="confirmBtn" type="button">ยืนยัน</button>
+        <button id="backToFormBtn" type="button" class="cancel">ยกเลิก</button>
       </div>
     </div>
 
     <!-- STEP 3: Success -->
-    <div id="step-summary" class="hidden" role="alert" aria-live="assertive">
+    <div id="step-summary" class="hidden" role="alert" aria-live="assertive" style="text-align:center;">
+      <div>ระบบทำรายการเรียบร้อยแล้ว</div>
       <div class="success-icon" aria-hidden="true">✔</div>
-      <div class="summary" id="summary-text"></div>
-      <button id="backBtn" type="button">ทำรายการต่อ</button>
+      <div class="overlay-box">
+        <div class="info-row">
+          <div class="info-label">รหัสเติมคะแนน</div>
+          <div class="info-value" id="summary-code"></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">คะแนนที่ได้รับ</div>
+          <div class="info-value positive" id="summary-points"></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">วันที่ / เวลา</div>
+          <div class="info-value" id="summary-datetime"></div>
+        </div>
+      </div>
+      <button id="backBtn" type="button" style="margin-top:24px;">ทำรายการต่อ</button>
     </div>
 
     <!-- STEP 4: Error -->
@@ -334,12 +382,10 @@
   }
 
   function showStep(step) {
-    // ซ่อนทุก step ก่อน
     const steps = ["step-form", "step-confirm", "step-summary", "step-error"];
     steps.forEach((s) => {
       document.getElementById(s).classList.add("hidden");
     });
-    // แสดง step ที่ต้องการ
     document.getElementById(step).classList.remove("hidden");
   }
 
@@ -360,14 +406,21 @@
       return;
     }
 
-    // เก็บข้อมูลโค้ดปัจจุบันไว้ global
     currentCodeData = codeData;
     currentUserCode = codeInput;
 
-    // แสดง preview step
-    document.getElementById(
-      "confirm-text"
-    ).innerHTML = `โค้ด <strong>${currentUserCode}</strong> จะได้รับคะแนน <strong style="color:#FFD700">${codeData.points}</strong> คะแนน`;
+    // สร้าง HTML สองบรรทัดแบบสองคอลัมน์
+    const confirmTextEl = document.getElementById("confirm-text");
+    confirmTextEl.innerHTML = `
+      <div class="info-row">
+        <div class="info-label">รหัสเติมคะแนน</div>
+        <div class="info-value">${currentUserCode}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">คะแนนที่จะได้รับ</div>
+        <div class="info-value positive">+${codeData.points} คะแนน</div>
+      </div>
+    `;
     showStep("step-confirm");
   });
 
@@ -377,7 +430,7 @@
     document.getElementById("message").textContent = "";
   });
 
-  // ปุ่ม ย้อนกลับ (ในหน้าสรุป preview) -> กลับไปหน้ากรอกโค้ด
+  // ปุ่ม ยกเลิก (ในหน้าสรุป preview) -> กลับไปหน้ากรอกโค้ด
   document.getElementById("backToFormBtn").addEventListener("click", () => {
     showStep("step-form");
     document.getElementById("message").textContent = "";
@@ -388,7 +441,7 @@
     showLoading(true);
     document.getElementById("message").textContent = "กำลังเติมคะแนน...";
     try {
-      await fetchAuthToken(); // ขอ token ใหม่ถ้าจำเป็น
+      await fetchAuthToken();
       await topupPoints(currentCodeData, currentUserCode);
       showLoading(false);
       showSummary(currentCodeData.points);
@@ -405,21 +458,22 @@
   function showSummary(points) {
     showStep("step-summary");
 
+    document.getElementById("summary-code").textContent = currentUserCode;
+    document.getElementById("summary-points").textContent = "+" + points + " คะแนน";
+
     const now = new Date();
+    const dateStr = now.toLocaleDateString("th-TH", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+    const timeStr = now.toLocaleTimeString("th-TH", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     document.getElementById(
-      "summary-text"
-    ).innerHTML = `
-      เติม <span style="color:#FFD700">${points}</span> คะแนนเข้าสู่บัญชีของคุณเรียบร้อยแล้ว<br>
-      วันที่ ${now.toLocaleDateString("th-TH", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })} 
-      เวลา ${now.toLocaleTimeString("th-TH", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}
-    `;
+      "summary-datetime"
+    ).textContent = `${dateStr} ${timeStr}`;
   }
 
   function showError(msg) {
