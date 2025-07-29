@@ -5,15 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>เติมคะแนน J POINT (TEST)</title>
 <style>
-  /* จำลองฟอนต์ DB Ozone X (ต้องใช้ไฟล์จริงแทน) */
-  @font-face {
-    font-family: 'DB Ozone X';
-    src: local('Arial Black'), local('Arial Bold'), local('Arial');
-    font-weight: 700;
-    font-style: normal;
-  }
+  @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
 
-  /* ใช้ DB Ozone X เป็นฟอนต์หลัก */
   * {
     box-sizing: border-box;
   }
@@ -21,7 +14,7 @@
   body, html {
     margin: 0; padding: 0;
     height: 100%;
-    font-family: 'DB Ozone X', Arial, sans-serif;
+    font-family: 'Kanit', sans-serif;
     background-color: #000;
     color: #fff;
     display: flex;
@@ -61,7 +54,6 @@
     color: #fff;
     text-align: center;
     transition: border-color 0.3s;
-    font-family: 'DB Ozone X', Arial, sans-serif;
   }
 
   input[type="text"]::placeholder {
@@ -82,8 +74,7 @@
   }
 
   button {
-    flex: 1;
-    padding: 14px 0;
+    padding: 14px 24px;
     font-size: 1.25rem;
     font-weight: 700;
     color: #fff;
@@ -93,7 +84,7 @@
     cursor: pointer;
     transition: background-color 0.3s;
     user-select: none;
-    font-family: 'DB Ozone X', Arial, sans-serif;
+    font-family: 'Kanit', sans-serif;
   }
 
   button:hover:enabled,
@@ -134,7 +125,6 @@
     line-height: 1.6;
     user-select: none;
     text-align: left;
-    font-family: 'DB Ozone X', Arial, sans-serif;
   }
 
   .success-icon {
@@ -186,11 +176,10 @@
 
   /* กรอบ Overlay ในหน้าสรุป */
   #step-summary .overlay-box {
-    border: 2px solid #FFD700;
     border-radius: 14px;
     padding: 12px 16px;
     margin-top: 12px;
-    background-color: #222;
+    background-color: rgba(255, 255, 255, 0.05); /* สีเทาเข้มโปร่งแสง */
     user-select: none;
   }
 
@@ -201,7 +190,6 @@
     margin: 4px 0;
     font-weight: 600;
     font-size: 0.9rem; /* เล็กลง */
-    font-family: 'DB Ozone X', Arial, sans-serif;
   }
   .info-label {
     color: #ccc;
@@ -226,6 +214,16 @@
     color: #FFD700;
     margin-bottom: 12px;
     user-select: none;
+  }
+
+  /* ปรับปุ่ม กลับสู่หน้าหลัก */
+  #backBtn {
+    margin-top: 24px;
+    padding: 14px 20px;
+    width: auto;
+    min-width: 160px;
+    max-width: 100%;
+    white-space: nowrap;
   }
 
   @media (max-width: 350px) {
@@ -308,7 +306,7 @@
           <div class="info-value" id="summary-datetime"></div>
         </div>
       </div>
-      <button id="backBtn" type="button" style="margin-top:24px;">กลับสู่หน้าหลัก</button>
+      <button id="backBtn" type="button">กลับสู่หน้าหลัก</button>
     </div>
 
     <!-- STEP 4: Error -->
@@ -320,6 +318,7 @@
   </div>
 
 <script>
+  // (JS เดิมเหมือนเดิมไม่เปลี่ยนแปลง)
   const AUTH_CONFIG = {
     partnerCode: "JP_DEV",
     clientId: "JP_DEV",
@@ -337,13 +336,11 @@
   let currentCodeData = null;
   let currentUserCode = "";
 
-  // ตัวอย่างฐานข้อมูลโค้ดโปรโมชั่น
   const codeDB = {
     "001": { brandName: "J POINT", points: 200 },
     ABC: { brandName: "J POINT", points: 500 },
   };
 
-  // เก็บ auth token และ timestamp ใน sessionStorage
   function saveAuthToken(token) {
     sessionStorage.setItem("authToken", token);
     sessionStorage.setItem("authTokenTimestamp", Date.now());
@@ -354,9 +351,8 @@
     const timestamp = sessionStorage.getItem("authTokenTimestamp");
     if (!token || !timestamp) return null;
 
-    // สมมติ token มีอายุ 1 ชั่วโมง (3600000 ms)
     if (Date.now() - timestamp > 3600000) {
-      return null; // token หมดอายุ
+      return null;
     }
     return token;
   }
@@ -433,14 +429,12 @@
     spinner.style.display = show ? "block" : "none";
   }
 
-  // ฟังก์ชันสลับแสดง step
   function showStep(stepId) {
     ["step-form", "step-confirm", "step-summary", "step-error"].forEach((id) => {
       document.getElementById(id).classList.toggle("hidden", id !== stepId);
     });
   }
 
-  // เช็ค input และเปิด/ปิดปุ่ม submit
   const codeInputEl = document.getElementById("codeInput");
   const submitBtn = document.getElementById("submitBtn");
   codeInputEl.addEventListener("input", () => {
@@ -448,7 +442,6 @@
     document.getElementById("message").textContent = "";
   });
 
-  // กดปุ่มยืนยันในหน้าแรก -> ตรวจโค้ดและขึ้นหน้าสรุป preview
   submitBtn.addEventListener("click", () => {
     const inputCode = codeInputEl.value.trim();
     if (!inputCode) return;
@@ -474,20 +467,17 @@
     showStep("step-confirm");
   });
 
-  // ปุ่ม ยกเลิก (ในหน้ากรอกโค้ด) -> ล้างค่าและข้อความ
   document.getElementById("cancelBtn").addEventListener("click", () => {
     codeInputEl.value = "";
     submitBtn.disabled = true;
     document.getElementById("message").textContent = "";
   });
 
-  // ปุ่ม ยกเลิก (ในหน้าสรุป preview) -> กลับไปหน้ากรอกโค้ด
   document.getElementById("backToFormBtn").addEventListener("click", () => {
     showStep("step-form");
     document.getElementById("message").textContent = "";
   });
 
-  // ปุ่ม ยืนยันเติมคะแนน (หน้าสรุป preview) -> เริ่มทำรายการเติมคะแนนจริง
   document.getElementById("confirmBtn").addEventListener("click", async () => {
     showLoading(true);
     document.getElementById("message").textContent = "กำลังเติมคะแนน...";
@@ -532,17 +522,14 @@
     document.getElementById("error-text").innerHTML = msg;
   }
 
-  // ปุ่ม กลับสู่หน้าหลัก (หน้า success) รีโหลดเพจ
   document.getElementById("backBtn").addEventListener("click", () => {
     window.location.reload();
   });
 
-  // ปุ่ม ลองใหม่อีกครั้ง (หน้า error) รีโหลดเพจ
   document.getElementById("retryBtn").addEventListener("click", () => {
     window.location.reload();
   });
 
-  // ดึง userID จาก URL
   function getUserID() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get("userID");
