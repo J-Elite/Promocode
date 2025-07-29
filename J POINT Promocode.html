@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เติมคะแนน J POINT</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Kanit", sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #111;
+      border: 2px solid #FFD700;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #FFD700;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 2px solid #FFD700;
+      border-radius: 6px;
+      background: #000;
+      color: #fff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #E30613;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #B3040F;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #FFD700;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .summary {
+      font-size: 1rem;
+      color: #fff;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .success-icon {
+      font-size: 3rem;
+      color: #00ff6a;
+      margin-bottom: 15px;
+    }
+
+    .error-icon {
+      font-size: 3rem;
+      color: #E30613;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>เติมคะแนน J POINT</h1>
+    <div id="step-form">
+      <input type="text" id="codeInput" placeholder="กรอกโค้ดโปรโมชั่น" />
+      <button id="submitBtn">ยืนยัน</button>
+      <div class="message" id="message"></div>
+    </div>
+
+    <div id="step-summary" class="hidden">
+      <div class="success-icon">✔</div>
+      <div class="summary" id="summary-text"></div>
+      <button id="backBtn">ทำรายการต่อ</button>
+    </div>
+
+    <div id="step-error" class="hidden">
+      <div class="error-icon">✖</div>
+      <div class="summary" id="error-text"></div>
+      <button id="retryBtn">ลองใหม่อีกครั้ง</button>
+    </div>
+  </div>
+
+  <script>
+    const AUTH_CONFIG = {
+      partnerCode: "J_ELITE",
+      clientId: "J_ELITE",
+      clientSecret: "ใส่รหัสตรงนี้" // ต้องเปลี่ยนเป็นค่าแท้จริง
+    };
+
+    let authToken = "";
+    let accountNumber = "";
+
+    function getUserID() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get("userID");
+    }
+
+    async function fetchAuthToken() {
+      try {
+        const res = await fetch("https://api.jpointcrm.com/api/v1/partner/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(AUTH_CONFIG)
+        });
+        const data = await res.json();
+        authToken = data?.data?.authToken || "";
+      } catch (err) {
+        showError("ไม่สามารถยืนยันตัวตนได้");
+      }
+    }
+
+    function validateCode(code) {
+      const codeDB = {
+        "001": { brandName: "J POINT", points: 200 },
+        "ABC": { brandName: "J POINT", points: 500 }
+      };
+      return codeDB[code] || null;
+    }
+
+    function generateRequestNumber() {
+      return "JPTCDTOPUP" + Date.now().toString().slice(-12);
+    }
+
+    async function topupPoints(codeData, userCode) {
+      const today = new Date();
+      const businessDate = today.toISOString().slice(0,10);
+      const payload = {
+        businessDate: businessDate,
+        brandName: codeData.brandName,
+        branchName: "PVT - PT MAX",
+        creditCode: "POINT",
+        creditTopupAmount: codeData.points,
+        memberCode: accountNumber,
+        orderNumber: userCode,
+        requestNumber: generateRequestNumber(),
+        requestType: "Submit"
+      };
+      const res = await fetch("https://api.jpointcrm.com/api/v1/partner/credit/topup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + authToken
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        throw new Error("Topup failed");
+      }
+      return await res.json();
+    }
+
+    document.getElementById("submitBtn").addEventListener("click", async () => {
+      const codeInput = document.getElementById("codeInput").value.trim();
+      const messageEl = document.getElementById("message");
+      messageEl.textContent = "";
+
+      if (!codeInput) {
+        messageEl.textContent = "กรุณากรอกโค้ด";
+        return;
+      }
+
+      const codeData = validateCode(codeInput);
+      if (!codeData) {
+        showError("โค้ดไม่ถูกต้อง หรือหมดอายุ");
+        return;
+      }
+
+      messageEl.textContent = "กำลังเติมคะแนน...";
+      try {
+        await topupPoints(codeData, codeInput);
+        showSummary(codeData.points);
+      } catch (err) {
+        showError("ไม่สามารถเติมคะแนนได้");
+      }
+    });
+
+    function showSummary(points) {
+      document.getElementById("step-form").classList.add("hidden");
+      document.getElementById("step-error").classList.add("hidden");
+      document.getElementById("step-summary").classList.remove("hidden");
+
+      const now = new Date();
+      document.getElementById("summary-text").innerHTML = `
+        เติม <span style="color:#FFD700">${points}</span> คะแนนเข้าสู่บัญชีของคุณเรียบร้อยแล้ว<br>
+        วันที่ ${now.toLocaleDateString("th-TH",{day:'numeric',month:'long',year:'numeric'})} 
+        เวลา ${now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'})}`;
+    }
+
+    function showError(msg) {
+      document.getElementById("step-form").classList.add("hidden");
+      document.getElementById("step-summary").classList.add("hidden");
+      document.getElementById("step-error").classList.remove("hidden");
+      document.getElementById("error-text").innerHTML = msg;
+    }
+
+    document.getElementById("backBtn").addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    document.getElementById("retryBtn").addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      accountNumber = getUserID();
+      if (!accountNumber) {
+        showError("ไม่พบ userID ใน URL");
+        return;
+      }
+      await fetchAuthToken();
+    });
+  </script>
+</body>
+</html>
