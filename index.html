@@ -36,10 +36,11 @@
     border-radius: 16px;
     padding: 28px 24px 32px 24px;
     width: 90vw;
-    max-width: 400px;
+    max-width: 420px;
     box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
     text-align: center;
     position: relative;
+    word-wrap: break-word;
   }
 
   h1 {
@@ -47,6 +48,8 @@
     font-weight: 700;
     color: #FFD700;
     margin-bottom: 28px;
+    line-height: 1.3;
+    word-break: keep-all;
   }
 
   input[type="text"] {
@@ -73,12 +76,14 @@
     display: flex;
     gap: 12px;
     justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   button {
     flex: 1;
+    min-width: 120px;
     padding: 14px 0;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #fff;
     background-color: #E30613;
@@ -87,10 +92,11 @@
     cursor: pointer;
     transition: background-color 0.3s;
     font-family: 'DB Ozone X', Arial, sans-serif;
+    white-space: nowrap;
   }
   button:hover:enabled { background-color: #B3040F; }
   button:disabled {
-    background-color: #7a0000; /* สีแดงหม่น */
+    background-color: #7a0000;
     cursor: not-allowed;
   }
   button.cancel { background-color: #555; }
@@ -101,16 +107,18 @@
     font-size: 1.1rem;
     color: #FFD700;
     min-height: 1.4em;
+    word-break: break-word;
   }
   .hidden { display: none !important; }
 
   .summary {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #fff;
     margin-top: 14px;
-    line-height: 1.6;
+    line-height: 1.5;
     text-align: left;
     font-family: 'DB Ozone X', Arial, sans-serif;
+    word-break: break-word;
   }
 
   /* Success icon */
@@ -169,7 +177,9 @@
     justify-content: space-between;
     margin: 4px 0;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    gap: 10px;
+    flex-wrap: wrap;
   }
   .info-label { color: #ccc; }
   .info-value { color: #FFD700; }
@@ -178,29 +188,30 @@
   #summary-datetime { color: #fff !important; font-weight: 500; }
 
   #step-summary > div:first-child {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     font-weight: 700;
     color: #FFD700;
     margin-bottom: 12px;
+    line-height: 1.3;
   }
 
   #backBtn {
     margin-top: 24px;
     padding: 12px 28px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     background-color: #E30613;
     border-radius: 8px;
     display: inline-block;
-    width: auto; /* ปรับความยาวพอดีกับข้อความ */
+    width: auto;
   }
 
   @media (max-width: 350px) {
-    h1 { font-size: 1.5rem; }
-    input[type="text"], button { font-size: 1rem; padding: 12px 14px; }
+    h1 { font-size: 1.4rem; }
+    input[type="text"], button { font-size: 1rem; padding: 12px 10px; }
     .success-icon { width: 72px; height: 72px; }
     .success-icon svg { width: 36px; height: 36px; }
     .button-group { gap: 8px; }
-    .info-row { font-size: 0.8rem; }
+    .info-row { font-size: 0.85rem; }
   }
 </style>
 </head>
