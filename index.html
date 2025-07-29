@@ -27,13 +27,20 @@
     background: #111;
     border: 3px solid #FFD700;
     border-radius: 16px;
-    padding: 24px 20px 28px 20px;
+    padding: 32px 20px 32px 20px; /* ปรับเพิ่ม padding ด้านบน-ล่าง */
     width: 90vw;
     max-width: 420px;
     box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
     text-align: center;
     position: relative;
     word-wrap: break-word;
+  }
+
+  .logo {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin: 0 auto 16px auto;
   }
 
   h1 {
@@ -213,11 +220,13 @@
     .error-circle { width: 68px; height: 68px; font-size: 2.2rem; }
     .button-group { gap: 8px; }
     .info-row { font-size: 0.8rem; }
+    .logo { width: 100px; margin-bottom: 12px; }
   }
 </style>
 </head>
 <body>
   <div class="container" role="main" aria-label="ฟอร์มเติมคะแนน J POINT">
+    <img src="J POINT Logo.png" alt="J POINT Logo" class="logo" />
 
     <!-- STEP 1 -->
     <div id="step-form">
