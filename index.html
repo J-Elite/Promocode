@@ -134,16 +134,18 @@
     height: 88px;
     margin-left: auto;
     margin-right: auto;
-    background: #FFD700;
+    background: none;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .success-icon svg {
-    width: 44px;
-    height: 44px;
-    fill: #fff;
+    width: 72px;
+    height: 72px;
+    stroke: #00ff6a;
+    stroke-width: 4;
+    fill: none;
   }
 
   .error-circle {
@@ -157,9 +159,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.8rem;
-    color: #fff;
-    font-weight: bold;
+  }
+  .error-circle svg {
+    width: 48px;
+    height: 48px;
+    stroke: #fff;
+    stroke-width: 5;
+    fill: none;
   }
 
   .spinner {
@@ -222,8 +228,9 @@
     h1 { font-size: 1.3rem; }
     input[type="text"], button { font-size: 0.95rem; padding: 10px 8px; }
     .success-icon { width: 68px; height: 68px; }
-    .success-icon svg { width: 32px; height: 32px; }
-    .error-circle { width: 68px; height: 68px; font-size: 2.2rem; }
+    .success-icon svg { width: 56px; height: 56px; }
+    .error-circle { width: 68px; height: 68px; }
+    .error-circle svg { width: 36px; height: 36px; }
     .button-group { gap: 8px; }
     .info-row { font-size: 0.8rem; }
     .logo { max-width: 140px; }
@@ -262,7 +269,7 @@
         <div>ระบบทำรายการเรียบร้อยแล้ว</div>
         <div class="success-icon">
           <svg viewBox="0 0 24 24">
-            <path d="M9 16.17l-3.88-3.88a1 1 0 0 0-1.42 1.42l4.59 4.59a1 1 0 0 0 1.42 0l10-10a1 1 0 0 0-1.42-1.42L9 16.17z"/>
+            <path d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <div class="overlay-box">
@@ -285,7 +292,12 @@
       <!-- STEP 4 -->
       <div id="step-error" class="hidden" style="text-align:center;">
         <div style="font-size:1.2rem; margin-bottom:10px;">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
-        <div class="error-circle">✖</div>
+        <div class="error-circle">
+          <svg viewBox="0 0 24 24">
+            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="6" y1="18" x2="18" y2="6" />
+          </svg>
+        </div>
         <button id="retryBtn" type="button">กลับสู่หน้าหลัก</button>
       </div>
     </div>
