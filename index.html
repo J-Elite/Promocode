@@ -1,279 +1,340 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>เติมคะแนน J POINT (TEST)</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Kanit", sans-serif;
-      background-color: #000;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>เติมคะแนน J POINT (TEST)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
 
-    .container {
-      background: #111;
-      border: 2px solid #FFD700;
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 360px;
-      width: 90%;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      text-align: center;
-    }
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
 
+  body, html {
+    margin: 0; padding: 0;
+    height: 100%;
+    font-family: 'Kanit', sans-serif;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .container {
+    background: #111;
+    border: 3px solid #FFD700;
+    border-radius: 16px;
+    padding: 28px 24px 32px 24px;
+    width: 90vw;
+    max-width: 400px;
+    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
+    text-align: center;
+    position: relative;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 28px;
+    user-select: none;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 1.2rem;
+    border: 2.5px solid #FFD700;
+    border-radius: 10px;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+
+  input[type="text"]::placeholder {
+    color: #aaa;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #FFC700;
+    box-shadow: 0 0 8px #FFD700aa;
+  }
+
+  button {
+    margin-top: 24px;
+    width: 100%;
+    padding: 14px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    background-color: #E30613;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    user-select: none;
+  }
+
+  button:hover,
+  button:focus {
+    background-color: #B3040F;
+    outline: none;
+  }
+
+  .message {
+    margin-top: 18px;
+    font-size: 1.1rem;
+    color: #FFD700;
+    min-height: 1.4em;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .summary {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-top: 14px;
+    line-height: 1.6;
+    user-select: none;
+  }
+
+  .success-icon {
+    font-size: 4rem;
+    color: #00ff6a;
+    margin-bottom: 18px;
+    user-select: none;
+  }
+
+  .error-icon {
+    font-size: 4rem;
+    color: #E30613;
+    margin-bottom: 18px;
+    user-select: none;
+  }
+
+  /* Spinner */
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid #FFD700;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: none;
+    z-index: 100;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+
+  /* Responsive text scaling on small devices */
+  @media (max-width: 350px) {
     h1 {
       font-size: 1.5rem;
-      color: #FFD700;
-      margin-bottom: 20px;
     }
-
-    input {
-      width: 100%;
-      padding: 12px;
+    input[type="text"], button {
       font-size: 1rem;
-      border: 2px solid #FFD700;
-      border-radius: 6px;
-      background: #000;
-      color: #fff;
-      margin-bottom: 20px;
-      text-align: center;
+      padding: 12px 14px;
     }
-
-    input::placeholder {
-      color: #aaa;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      background: #E30613;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s;
-      font-weight: bold;
-    }
-
-    button:hover {
-      background: #B3040F;
-    }
-
-    .message {
-      margin-top: 15px;
-      font-size: 1rem;
-      color: #FFD700;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .summary {
-      font-size: 1rem;
-      color: #fff;
-      margin-top: 10px;
-      line-height: 1.6;
-    }
-
-    .success-icon {
+    .success-icon, .error-icon {
       font-size: 3rem;
-      color: #00ff6a;
-      margin-bottom: 15px;
+      margin-bottom: 14px;
     }
-
-    .error-icon {
-      font-size: 3rem;
-      color: #E30613;
-      margin-bottom: 15px;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" role="main" aria-label="ฟอร์มเติมคะแนน J POINT">
     <h1>เติมคะแนน J POINT (TEST)</h1>
+
     <div id="step-form">
-      <input type="text" id="codeInput" placeholder="กรอกโค้ดโปรโมชั่น" />
-      <button id="submitBtn">ยืนยัน</button>
-      <div class="message" id="message"></div>
+      <input type="text" id="codeInput" placeholder="กรอกโค้ดโปรโมชั่น" aria-label="กรอกโค้ดโปรโมชั่น" autocomplete="off" />
+      <button id="submitBtn" type="button" aria-live="polite">ยืนยัน</button>
+      <div class="message" id="message" aria-live="polite"></div>
+      <div class="spinner" id="loadingSpinner" aria-hidden="true"></div>
     </div>
 
-    <div id="step-summary" class="hidden">
-      <div class="success-icon">✔</div>
+    <div id="step-summary" class="hidden" role="alert" aria-live="assertive">
+      <div class="success-icon" aria-hidden="true">✔</div>
       <div class="summary" id="summary-text"></div>
-      <button id="backBtn">ทำรายการต่อ</button>
+      <button id="backBtn" type="button">ทำรายการต่อ</button>
     </div>
 
-    <div id="step-error" class="hidden">
-      <div class="error-icon">✖</div>
+    <div id="step-error" class="hidden" role="alert" aria-live="assertive">
+      <div class="error-icon" aria-hidden="true">✖</div>
       <div class="summary" id="error-text"></div>
-      <button id="retryBtn">ลองใหม่อีกครั้ง</button>
+      <button id="retryBtn" type="button">ลองใหม่อีกครั้ง</button>
     </div>
   </div>
 
-  <script>
-    const AUTH_CONFIG = {
-      partnerCode: "JP_DEV",
-      clientId: "JP_DEV",
-      clientSecret:
-        "423e410c51e0a02c84d1c6046f97c9df1debde99a1aa1c216a39aa3e3756bd02a00401d99eaa264db266fad39f84680f1389af8f2803569ef788a031a2d82f05",
-    };
+<script>
+  const AUTH_CONFIG = {
+    partnerCode: "JP_DEV",
+    clientId: "JP_DEV",
+    clientSecret: "423e410c51e0a02c84d1c6046f97c9df1debde99a1aa1c216a39aa3e3756bd02a00401d99eaa264db266fad39f84680f1389af8f2803569ef788a031a2d82f05"
+  };
 
-    const ENDPOINTS = {
-      auth: "https://sit-api.jpointcrm.com/api/v1/partner/auth",
-      topup: "https://sit-api.jpointcrm.com/api/v1/partner/credit/topup",
-    };
+  const ENDPOINTS = {
+    auth: "https://sit-api.jpointcrm.com/api/v1/partner/auth",
+    topup: "https://sit-api.jpointcrm.com/api/v1/partner/credit/topup"
+  };
 
-    let authToken = "";
-    let accountNumber = "";
+  let authToken = "";
+  let accountNumber = "";
 
-    function getUserID() {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get("userID");
-    }
+  // โค้ดทดสอบใน DB
+  const codeDB = {
+    "001": { brandName: "J POINT", points: 200 },
+    "ABC": { brandName: "J POINT", points: 500 }
+  };
 
-    async function fetchAuthToken() {
-      try {
-        const res = await fetch(ENDPOINTS.auth, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(AUTH_CONFIG),
-        });
-        const data = await res.json();
-        authToken = data?.data?.authToken || "";
-        if (!authToken) throw new Error("No auth token");
-      } catch (err) {
-        showError("ไม่สามารถยืนยันตัวตนได้");
-      }
-    }
+  function getUserID() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("userID");
+  }
 
-    function validateCode(code) {
-      // ตัวอย่างโค้ดทดสอบ
-      const codeDB = {
-        "001": { brandName: "J POINT", points: 200 },
-        ABC: { brandName: "J POINT", points: 500 },
-      };
-      return codeDB[code] || null;
-    }
-
-    function generateRequestNumber() {
-      // สร้าง random string ความยาวไม่เกิน 25 ตัว (A-Z, 0-9)
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let result = "JPTOPUP";
-      while (result.length < 25) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return result;
-    }
-
-    async function topupPoints(codeData, userCode) {
-      const today = new Date();
-      const businessDate = today.toISOString().slice(0, 10);
-      const branchName = "-";
-
-      const payload = {
-        businessDate: businessDate,
-        brandName: codeData.brandName,
-        branchName: branchName,
-        creditCode: "POINT",
-        creditTopupAmount: codeData.points,
-        memberCode: accountNumber,
-        orderNumber: userCode, // ใช้โค้ดลูกค้ากรอกแทน
-        requestNumber: generateRequestNumber(),
-        requestType: "Submit",
-      };
-
-      const res = await fetch(ENDPOINTS.topup, {
+  async function fetchAuthToken() {
+    try {
+      const res = await fetch(ENDPOINTS.auth, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + authToken,
-        },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(AUTH_CONFIG)
       });
+      const data = await res.json();
+      authToken = data?.data?.authToken || "";
+      if (!authToken) throw new Error("No auth token");
+    } catch (err) {
+      showError("ไม่สามารถยืนยันตัวตนได้");
+    }
+  }
 
-      if (!res.ok) {
-        throw new Error("Topup failed");
-      }
-      return await res.json();
+  function validateCode(code) {
+    return codeDB[code] || null;
+  }
+
+  function generateRequestNumber() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "JPTOPUP";
+    while (result.length < 25) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  async function topupPoints(codeData, userCode) {
+    const today = new Date();
+    const businessDate = today.toISOString().slice(0,10);
+    const branchName = "-";
+
+    const payload = {
+      businessDate: businessDate,
+      brandName: codeData.brandName,
+      branchName: branchName,
+      creditCode: "POINT",
+      creditTopupAmount: codeData.points,
+      memberCode: accountNumber,
+      orderNumber: userCode,
+      requestNumber: generateRequestNumber(),
+      requestType: "Submit"
+    };
+
+    const res = await fetch(ENDPOINTS.topup, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + authToken
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      throw new Error("Topup failed");
+    }
+    return await res.json();
+  }
+
+  function showLoading(show) {
+    const spinner = document.getElementById("loadingSpinner");
+    spinner.style.display = show ? "block" : "none";
+  }
+
+  document.getElementById("submitBtn").addEventListener("click", async () => {
+    const codeInput = document.getElementById("codeInput").value.trim();
+    const messageEl = document.getElementById("message");
+    messageEl.textContent = "";
+
+    if (!codeInput) {
+      messageEl.textContent = "กรุณากรอกโค้ด";
+      return;
     }
 
-    document.getElementById("submitBtn").addEventListener("click", async () => {
-      const codeInput = document.getElementById("codeInput").value.trim();
-      const messageEl = document.getElementById("message");
-      messageEl.textContent = "";
-
-      if (!codeInput) {
-        messageEl.textContent = "กรุณากรอกโค้ด";
-        return;
-      }
-
-      const codeData = validateCode(codeInput);
-      if (!codeData) {
-        showError("โค้ดไม่ถูกต้อง หรือหมดอายุ");
-        return;
-      }
-
-      messageEl.textContent = "กำลังเติมคะแนน...";
-      try {
-        await topupPoints(codeData, codeInput);
-        showSummary(codeData.points);
-      } catch (err) {
-        showError("ไม่สามารถเติมคะแนนได้");
-      }
-    });
-
-    function showSummary(points) {
-      document.getElementById("step-form").classList.add("hidden");
-      document.getElementById("step-error").classList.add("hidden");
-      document.getElementById("step-summary").classList.remove("hidden");
-
-      const now = new Date();
-      document.getElementById("summary-text").innerHTML = `
-        เติม <span style="color:#FFD700">${points}</span> คะแนนเข้าสู่บัญชีของคุณเรียบร้อยแล้ว<br>
-        วันที่ ${now.toLocaleDateString("th-TH", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}
-        เวลา ${now.toLocaleTimeString("th-TH", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      `;
+    const codeData = validateCode(codeInput);
+    if (!codeData) {
+      showError("โค้ดไม่ถูกต้อง หรือหมดอายุ");
+      return;
     }
 
-    function showError(msg) {
-      document.getElementById("step-form").classList.add("hidden");
-      document.getElementById("step-summary").classList.add("hidden");
-      document.getElementById("step-error").classList.remove("hidden");
-      document.getElementById("error-text").innerHTML = msg;
+    showLoading(true);
+    messageEl.textContent = "กำลังเติมคะแนน...";
+    try {
+      await topupPoints(codeData, codeInput);
+      showLoading(false);
+      showSummary(codeData.points);
+    } catch (err) {
+      showLoading(false);
+      showError("ไม่สามารถเติมคะแนนได้");
     }
+  });
 
-    document.getElementById("backBtn").addEventListener("click", () => {
-      window.location.reload();
-    });
+  function showSummary(points) {
+    document.getElementById("step-form").classList.add("hidden");
+    document.getElementById("step-error").classList.add("hidden");
+    document.getElementById("step-summary").classList.remove("hidden");
 
-    document.getElementById("retryBtn").addEventListener("click", () => {
-      window.location.reload();
-    });
+    const now = new Date();
+    document.getElementById("summary-text").innerHTML = `
+      เติม <span style="color:#FFD700">${points}</span> คะแนนเข้าสู่บัญชีของคุณเรียบร้อยแล้ว<br>
+      วันที่ ${now.toLocaleDateString("th-TH",{day:'numeric',month:'long',year:'numeric'})} 
+      เวลา ${now.toLocaleTimeString("th-TH",{hour:'2-digit',minute:'2-digit'})}
+    `;
+  }
 
-    window.addEventListener("DOMContentLoaded", async () => {
-      accountNumber = getUserID();
-      if (!accountNumber) {
-        showError("ไม่พบ userID ใน URL");
-        return;
-      }
-      await fetchAuthToken();
-    });
-  </script>
+  function showError(msg) {
+    document.getElementById("step-form").classList.add("hidden");
+    document.getElementById("step-summary").classList.add("hidden");
+    document.getElementById("step-error").classList.remove("hidden");
+    document.getElementById("error-text").innerHTML = msg;
+  }
+
+  document.getElementById("backBtn").addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  document.getElementById("retryBtn").addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    accountNumber = getUserID();
+    if (!accountNumber) {
+      showError("ไม่พบ userID ใน URL");
+      return;
+    }
+    await fetchAuthToken();
+  });
+</script>
 </body>
 </html>
