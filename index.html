@@ -16,31 +16,35 @@
     font-family: 'Kanit', sans-serif;
     background-color: #000;
     color: #fff;
+  }
+
+  .wrapper {
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    gap: 16px; /* ช่องว่างระหว่างโลโก้กับกล่อง UI */
+    padding: 24px 0 40px 0;
+  }
+
+  .logo {
+    max-width: 180px;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
   }
 
   .container {
     background: #111;
     border: 3px solid #FFD700;
     border-radius: 16px;
-    padding: 32px 20px 32px 20px; /* ปรับเพิ่ม padding ด้านบน-ล่าง */
+    padding: 24px 20px 28px 20px;
     width: 90vw;
     max-width: 420px;
     box-shadow: 0 6px 24px rgba(255, 215, 0, 0.5);
     text-align: center;
     position: relative;
     word-wrap: break-word;
-  }
-
-  .logo {
-    width: 120px;
-    height: auto;
-    display: block;
-    margin: 0 auto 16px auto;
   }
 
   h1 {
@@ -220,66 +224,68 @@
     .error-circle { width: 68px; height: 68px; font-size: 2.2rem; }
     .button-group { gap: 8px; }
     .info-row { font-size: 0.8rem; }
-    .logo { width: 100px; margin-bottom: 12px; }
+    .logo { max-width: 140px; }
   }
 </style>
 </head>
 <body>
-  <div class="container" role="main" aria-label="ฟอร์มเติมคะแนน J POINT">
+  <div class="wrapper">
     <img src="J POINT Logo.png" alt="J POINT Logo" class="logo" />
+    <div class="container" role="main" aria-label="ฟอร์มเติมคะแนน J POINT">
 
-    <!-- STEP 1 -->
-    <div id="step-form">
-      <h1>กรอกรหัสรับคะแนน J POINT</h1>
-      <input type="text" id="codeInput" placeholder="กรอกรหัสรับคะแนน" autocomplete="off" />
-      <div class="button-group">
-        <button id="cancelBtn" type="button" class="cancel">ยกเลิก</button>
-        <button id="submitBtn" type="button" disabled>ยืนยัน</button>
-      </div>
-      <div class="message" id="message"></div>
-      <div class="spinner" id="loadingSpinner"></div>
-    </div>
-
-    <!-- STEP 2 -->
-    <div id="step-confirm" class="hidden">
-      <h1>ยืนยันการรับคะแนน</h1>
-      <div class="summary" id="confirm-text"></div>
-      <div class="button-group">
-        <button id="backToFormBtn" type="button" class="cancel">ยกเลิก</button>
-        <button id="confirmBtn" type="button">ยืนยัน</button>
-      </div>
-    </div>
-
-    <!-- STEP 3 -->
-    <div id="step-summary" class="hidden" style="text-align:center;">
-      <div>ระบบทำรายการเรียบร้อยแล้ว</div>
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M9 16.17l-3.88-3.88a1 1 0 0 0-1.42 1.42l4.59 4.59a1 1 0 0 0 1.42 0l10-10a1 1 0 0 0-1.42-1.42L9 16.17z"/>
-        </svg>
-      </div>
-      <div class="overlay-box">
-        <div class="info-row">
-          <div class="info-label">รหัสเติมคะแนน</div>
-          <div class="info-value" id="summary-code"></div>
+      <!-- STEP 1 -->
+      <div id="step-form">
+        <h1>กรอกรหัสรับคะแนน J POINT</h1>
+        <input type="text" id="codeInput" placeholder="กรอกรหัสรับคะแนน" autocomplete="off" />
+        <div class="button-group">
+          <button id="cancelBtn" type="button" class="cancel">ยกเลิก</button>
+          <button id="submitBtn" type="button" disabled>ยืนยัน</button>
         </div>
-        <div class="info-row">
-          <div class="info-label">คะแนนที่ได้รับ</div>
-          <div class="info-value positive" id="summary-points"></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">วันที่ / เวลา</div>
-          <div class="info-value" id="summary-datetime"></div>
+        <div class="message" id="message"></div>
+        <div class="spinner" id="loadingSpinner"></div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div id="step-confirm" class="hidden">
+        <h1>ยืนยันการรับคะแนน</h1>
+        <div class="summary" id="confirm-text"></div>
+        <div class="button-group">
+          <button id="backToFormBtn" type="button" class="cancel">ยกเลิก</button>
+          <button id="confirmBtn" type="button">ยืนยัน</button>
         </div>
       </div>
-      <button id="backBtn" type="button">กลับสู่หน้าหลัก</button>
-    </div>
 
-    <!-- STEP 4 -->
-    <div id="step-error" class="hidden" style="text-align:center;">
-      <div style="font-size:1.2rem; margin-bottom:10px;">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
-      <div class="error-circle">✖</div>
-      <button id="retryBtn" type="button">กลับสู่หน้าหลัก</button>
+      <!-- STEP 3 -->
+      <div id="step-summary" class="hidden" style="text-align:center;">
+        <div>ระบบทำรายการเรียบร้อยแล้ว</div>
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 16.17l-3.88-3.88a1 1 0 0 0-1.42 1.42l4.59 4.59a1 1 0 0 0 1.42 0l10-10a1 1 0 0 0-1.42-1.42L9 16.17z"/>
+          </svg>
+        </div>
+        <div class="overlay-box">
+          <div class="info-row">
+            <div class="info-label">รหัสเติมคะแนน</div>
+            <div class="info-value" id="summary-code"></div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">คะแนนที่ได้รับ</div>
+            <div class="info-value positive" id="summary-points"></div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">วันที่ / เวลา</div>
+            <div class="info-value" id="summary-datetime"></div>
+          </div>
+        </div>
+        <button id="backBtn" type="button">กลับสู่หน้าหลัก</button>
+      </div>
+
+      <!-- STEP 4 -->
+      <div id="step-error" class="hidden" style="text-align:center;">
+        <div style="font-size:1.2rem; margin-bottom:10px;">ไม่สามารถเติมคะแนนได้ กรุณาลองใหม่อีกครั้ง</div>
+        <div class="error-circle">✖</div>
+        <button id="retryBtn" type="button">กลับสู่หน้าหลัก</button>
+      </div>
     </div>
   </div>
 
