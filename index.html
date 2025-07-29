@@ -7,7 +7,6 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
 
-  /* Reset and base */
   * {
     box-sizing: border-box;
   }
@@ -141,7 +140,6 @@
     100% { transform: rotate(360deg);}
   }
 
-  /* Responsive text scaling on small devices */
   @media (max-width: 350px) {
     h1 {
       font-size: 1.5rem;
@@ -159,10 +157,10 @@
 </head>
 <body>
   <div class="container" role="main" aria-label="ฟอร์มเติมคะแนน J POINT">
-    <h1>เติมคะแนน J POINT (TEST)</h1>
+    <h1>กรอกรหัสสำหรับแลกรับคะแนน J POINT</h1>
 
     <div id="step-form">
-      <input type="text" id="codeInput" placeholder="กรอกโค้ดโปรโมชั่น" aria-label="กรอกโค้ดโปรโมชั่น" autocomplete="off" />
+      <input type="text" id="codeInput" placeholder="กรอกรหัสสำหรับแลกรับคะแนน" aria-label="กรอกโค้ดโปรโมชั่น" autocomplete="off" />
       <button id="submitBtn" type="button" aria-live="polite">ยืนยัน</button>
       <div class="message" id="message" aria-live="polite"></div>
       <div class="spinner" id="loadingSpinner" aria-hidden="true"></div>
@@ -196,19 +194,38 @@
   let authToken = "";
   let accountNumber = "";
 
-  // โค้ดทดสอบใน DB
+  // ตัวอย่างฐานข้อมูลโค้ดโปรโมชั่น
   const codeDB = {
     "001": { brandName: "J POINT", points: 200 },
     "ABC": { brandName: "J POINT", points: 500 }
   };
 
-  function getUserID() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get("userID");
+  // เก็บ auth token และ timestamp ใน sessionStorage
+  function saveAuthToken(token) {
+    sessionStorage.setItem("authToken", token);
+    sessionStorage.setItem("authTokenTimestamp", Date.now());
+  }
+
+  function loadAuthToken() {
+    const token = sessionStorage.getItem("authToken");
+    const timestamp = sessionStorage.getItem("authTokenTimestamp");
+    if (!token || !timestamp) return null;
+
+    // สมมติ token มีอายุ 1 ชั่วโมง (3600000 ms)
+    if (Date.now() - timestamp > 3600000) {
+      return null; // token หมดอายุ
+    }
+    return token;
   }
 
   async function fetchAuthToken() {
     try {
+      const existingToken = loadAuthToken();
+      if (existingToken) {
+        authToken = existingToken;
+        return;
+      }
+
       const res = await fetch(ENDPOINTS.auth, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -217,8 +234,10 @@
       const data = await res.json();
       authToken = data?.data?.authToken || "";
       if (!authToken) throw new Error("No auth token");
+      saveAuthToken(authToken);
     } catch (err) {
       showError("ไม่สามารถยืนยันตัวตนได้");
+      throw err;
     }
   }
 
@@ -290,12 +309,17 @@
     showLoading(true);
     messageEl.textContent = "กำลังเติมคะแนน...";
     try {
+      await fetchAuthToken();  // ขอ token ใหม่ถ้าจำเป็น
       await topupPoints(codeData, codeInput);
       showLoading(false);
       showSummary(codeData.points);
     } catch (err) {
       showLoading(false);
-      showError("ไม่สามารถเติมคะแนนได้");
+      if (!authToken) {
+        showError("ไม่สามารถยืนยันตัวตนได้");
+      } else {
+        showError("ไม่สามารถเติมคะแนนได้");
+      }
     }
   });
 
@@ -327,13 +351,22 @@
     window.location.reload();
   });
 
+  function getUserID() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("userID");
+  }
+
   window.addEventListener("DOMContentLoaded", async () => {
     accountNumber = getUserID();
     if (!accountNumber) {
       showError("ไม่พบ userID ใน URL");
       return;
     }
-    await fetchAuthToken();
+    try {
+      await fetchAuthToken();
+    } catch {
+      // Error แสดงไปแล้วใน fetchAuthToken()
+    }
   });
 </script>
 </body>
